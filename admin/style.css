@@ -1,0 +1,542 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+
+}
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-nav ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.admin-nav ul li a:hover {
+    color: #1abc9c;
+}
+
+.btn {
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.profile-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.profile-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+.admin-btn{
+    border: none;
+    border-radius: 5px;
+    height: 40px;
+    width: 100px;
+    background-color: #db8437;
+    color: #1a1a1a;
+    cursor: pointer;
+    margin-left: 90%;
+    margin-top: 20px;
+}
+.admin-btn:hover{
+    background-color:#e7a367; 
+}
+table {
+    width: 60%;
+    border-collapse: collapse;
+    margin: auto;
+    font-size: 18px;
+    text-align: left;
+
+}
+ /* ADD chapters */
+
+
+.courses-form {
+    max-width: 600px;
+    margin: auto;
+    padding: 30px;
+    background-color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+.courses-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+}
+
+.courses-form input[type="text"],
+.courses-form input[type="file"],
+.courses-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: 0.3s;
+    font-size: 16px;
+}
+
+.courses-form input[type="text"]:focus,
+.courses-form input[type="file"]:focus,
+.courses-form textarea:focus {
+    border-color: #0057d8;
+    outline: none;
+}
+
+.courses-form input[type="submit"] {
+    background-color: #0057d8;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.courses-form input[type="submit"]:hover {
+    background-color: #0040a8;
+} 
+
+/* Add-chapters */
+
+
+
+.chapters-form {
+    max-width: 700px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.chapters-form label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 18px;
+    color: #333;
+}
+
+.chapters-form input[type="number"],
+.chapters-form input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 8px 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.chapters-form input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.chapters-form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* add_quiz */
+
+.quiz-question-form {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #ffffff;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px 25px;
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-question-form h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.quiz-question-form form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #444;
+}
+
+.quiz-question-form input[type="text"],
+.quiz-question-form input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+}
+
+.quiz-question-form input[type="text"]:focus,
+.quiz-question-form input[type="number"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.quiz-question-form input[type="submit"] {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.quiz-question-form input[type="submit"]:hover {
+    background: #0056b3;
+}
+
+.quiz-success {
+    color: green;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* feedback */
+.feedback-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-header {
+    background-color: #007BFF;
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px;
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.feedback-row:hover {
+    background-color: #f1f1f1;
+}
+
+.feedback-cell {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.feedback-input {
+    padding: 6px 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.feedback-submit {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.feedback-submit:hover {
+    background-color: #218838;
+}
+
+
+/* user-data */
+/* Basic Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Admin Panel */
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+}
+
+/* Table Styles */
+.table_data {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Header */
+.table_data th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+/* Table Data */
+.table_data td {
+    padding: 10px;
+    text-align: left;
+    border-top: 1px solid #ddd;
+}
+
+/* Checkbox column */
+.table_data input[type="checkbox"] {
+    margin: 0;
+    padding: 0;
+}
+
+/* Select All Checkbox */
+.table_data th input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Admin Button */
+.admin-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin: 20px auto;
+    display: block;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.admin-btn:hover {
+    background-color: #45a049;
+}
+
+/* Select All Checkbox Container */
+input[type="checkbox"]:not(:checked) {
+    transform: scale(1.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .table_data {
+        width: 95%;
+    }
+    
+    .table_data th, .table_data td {
+        padding: 8px;
+    }
+
+    .admin-btn {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
+/* user-table button */
+
+
+.table-button{
+        background-color: #4CAF50;
+       
+        color: white;
+        padding: 10px 20px;
+        width:130px;
+        border: none;
+        cursor: pointer;
+        margin: auto;
+        display: block;
+        font-size: 12px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    
+}
+    
+.table-button:hover {
+        background-color: #45a049;
+}
+
+
+/* Container Form Styling */
+.edit-course-form {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 25px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Individual Input Groups */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  /* Labels */
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Text Inputs and File Input */
+  .form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  /* Image Preview */
+  .course-image {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Submit Button */
+  .submit-button-container {
+    text-align: center;
+  }
+  
+  .form-submit-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .form-submit-btn:hover {
+    background-color: #45a049;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .edit-course-form {
+      padding: 15px;
+    }
+  
+    .form-submit-btn {
+      width: 100%;
+    }
+  }
+
+  /* create-quiz css */
+
+  
+.quiz-form-container {
+    max-width: 500px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-form h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}

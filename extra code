@@ -1,0 +1,235 @@
+<?php 
+include "header.php"; 
+include "config.php";
+
+if (!(isset($_SESSION['name']))) {
+    header("Location: login.php");
+    exit;
+}
+
+if (isset($_GET['id'])) {
+    $course_id = $_GET['id'];
+    $question_num = isset($_GET['question_num']) ? $_GET['question_num'] : 1;
+
+    $sql = "SELECT * FROM course WHERE id = $course_id";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+    $course_name = $row['course_name'];
+    $username = $_SESSION['name'];
+
+    $sql = "SELECT enrolled_courses, completed_chapters FROM users WHERE username = '$username'";
+    $result = $conn->query($sql);
+    $rows = $result->fetch_assoc();
+    $enrolled_course = trim($rows['enrolled_courses']);
+    $completed_chapters = trim($rows['completed_chapters']);
+
+    $enrolled_courses_array = array_map('trim', explode(' ', $enrolled_course));
+    $completed_chapters_array = array_map('trim', explode(' ', $completed_chapters));
+
+    if (!in_array($course_name, $enrolled_courses_array)) {
+        $enrolled_course = trim("$enrolled_course $course_name");
+        $sql = "UPDATE users SET enrolled_courses = '$enrolled_course' WHERE username = '$username'";
+        $conn->query($sql);
+    }
+
+    $chaptersql = "SELECT * FROM chapters WHERE course_id = $course_id";
+    $chapter_result = $conn->query($chaptersql);
+}
+?>
+
+<div class="background">
+    <div class="course-content">
+        <div class="course-name">
+            <div class="course-name-left">
+                <img width="100px" src="img/php.jpeg" alt="PHP Course Logo">
+            </div>
+            <div class="course-name-right">
+                <h1><?php echo $row["course_name"]; ?></h1>
+            </div>
+        </div>
+
+        <div class="start-course">
+            <div class="course-nav">
+                <h3>Start Learning</h3>
+                <ul>
+                    <?php
+                    $chapter_sidebar_result = $conn->query("SELECT * FROM chapters WHERE course_id = $course_id");
+                    while ($chapter_row = $chapter_sidebar_result->fetch_assoc()) {
+                        $link = $chapter_row['link'];
+                        $title = $chapter_row['chapter_name'];
+                        $chapter_id = $chapter_row['id']; 
+                        $checked = in_array($chapter_id, $completed_chapters_array) ? "checked" : "";
+                    ?>
+                    <a href="enrolled_chapters.php?id=<?php echo $chapter_id; ?>" style="text-decoration:none; color:black;">
+                        <li onclick="changeVideo('<?php echo $link; ?>', '<?php echo $title; ?>', '<?php echo $chapter_id; ?>')">
+                            <label><a>
+                                <span class='title'><?php echo $title; ?></span>
+                                <input class='checks' type='checkbox' id='<?php echo $chapter_id; ?>' name='chapter_done' <?php echo $checked; ?>>
+                                <?php if ($_SESSION['role'] == 'admin') { ?>
+                                    <a href='admin/remove_chapters.php?id=<?php echo $chapter_id; ?>'>
+                                        <input type='button' class='delete-btn' value='Delete'>
+                                    </a>
+                                <?php } ?>
+                            </a></label>
+                        </li>
+                    </a>
+                    <?php } ?>
+
+                    <li style="background-color:white;">
+                        <div id="completion-message" style="display:none; color: green; font-weight: bold; margin-top: 20px;">
+                            <p>🎉 Congrats! You’ve completed all chapters.</p>
+                            <label>
+                                <form action='enroll.php' method='GET'>
+                                    <input type='hidden' name='id' value='<?php echo $course_id; ?>'>
+                                    <input type="submit" value="Quiz" name="quiz">   
+                                </form>
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="course-data">
+                <!-- Always present Video Area -->
+                <div id="video-area" style="margin-bottom: 30px;">
+                    <h3 id="video-title"></h3>
+                    <iframe id="videoFrame" allow="autoplay; encrypted-media" width="100%" height="400" src="" allowfullscreen></iframe>
+                </div>
+
+                <!-- Main Content Area -->
+                <div id="content-area">
+                <?php
+                if (isset($_GET['quiz'])) {
+                    $sql_ques = "SELECT * from quiz where quiz_course_id = $course_id";
+                    $result_ques = $conn->query($sql_ques);
+                    $total_questions = $result_ques->num_rows;
+
+                    $sql_quiz = "SELECT * from quiz where quiz_course_id = $course_id and question_num = $question_num";
+                    $result_quiz = $conn->query($sql_quiz);
+                    $row_quiz = $result_quiz->fetch_assoc();
+                    $question_id = $row_quiz['id'];
+
+                    if ($row_quiz) {
+                ?>
+                        <h1>QUIZ</h1>
+                        <?php if($_SESSION['role']=='admin'){ ?>
+                        <a href="admin/quiz.php?id=<?php echo $course_id; ?>"><button class="remove-btn" style="margin-left:500px;">Add questions</button></a>
+                        <br><br><a href="admin/remove_question.php?id=<?php echo $question_id; ?>"><button class="remove-btn" style="margin-left:500px;">Remove</button></a>
+                        <?php } ?>
+                        <form action="enroll.php" method="GET"><br><br>
+                            <p>
+                                <strong>Q<?php echo $question_num; ?>:</strong> <?php echo $row_quiz['question']; ?><br><br>
+                                <?php
+                                $sql_ans = "SELECT * from answers where question_id = $question_id";
+                                $result_answers = $conn->query($sql_ans);
+                                while ($row_answers = $result_answers->fetch_assoc()) {
+                                    $value = $row_answers['id'];
+                                ?>
+                                    <label><input type='radio' value='<?php echo $value; ?>' name='options' required> <?php echo $row_answers['option']; ?></label><br>
+                                <?php } ?>
+                                <input type='hidden' name='id' value='<?php echo $course_id; ?>'>
+                                <input type='hidden' name='quiz' value='1'>
+                                <input type='hidden' name='question_num' value='<?php echo $question_num; ?>'>
+                                <br>
+                                <input type='submit' value='Submit'>
+                            </p>
+                        </form>
+
+                        <?php
+                        if (isset($_GET['options'])) {
+                            $option_id = $_GET['options'];
+                            if (is_numeric($option_id)) {
+                                $selected_sql = "SELECT * FROM answers WHERE id = $option_id";
+                                $selected_result = $conn->query($selected_sql);
+                                $selected_row = $selected_result->fetch_assoc();
+
+                                if ($selected_row && $selected_row['is_correct'] == 1) {
+                                    echo "<p style='color:green'><b>✅ Correct Answer!</b></p>";
+                                    $next_question = $question_num + 1;
+                                    if ($next_question <= $total_questions) {
+                                        ?>
+                                        <form action='enroll.php' method='GET'>
+                                            <input type='hidden' name='id' value='<?php echo $course_id ?>'>
+                                            <input type='hidden' name='quiz' value='1'>
+                                            <input type='hidden' name='question_num' value='<?php echo $next_question; ?>'>
+                                            <input type='submit' value='Next' style='margin-left:700px; margin-top: -80px; position:absolute;'>
+                                        </form>
+                                        <?php
+                                    } else {
+                                        echo "<p style='color:blue'><b>🎉 Quiz Completed!</b></p>"; ?>
+                                        <p>
+                                             <a href="certificate.php?id=<?php echo $course_id ?>">
+                                                <button class="quiz_end_button" style="position:absolute; top: 500px; right: 400px;">Download Certificate</button>
+                                            </a> 
+                                            <a href="enroll.php?id=<?php echo $course_id ?>"><button class="quiz_end_button" style="position:absolute; top: 500px; right: 200px;">Back to chapters</button></a>
+                                        </p>
+                                    <?php }
+                                } else {
+                                    echo "<p style='color:red'><b>❌ Wrong Answer</b></p>";
+                                }
+                            }
+                        }
+                    } else {
+                        echo "<p><b>No question found!</b></p>";
+                        if($_SESSION['role']=='admin'){
+                            echo "<a href='admin/quiz.php?id=$course_id'><button class='remove-btn' style='margin-left:500px;'>Add questions</button></a>";
+                        }
+                    }
+                }
+                ?>
+                </div>
+            </div>
+
+            <?php if ($_SESSION['role'] == 'admin') {
+                echo "<a href='admin/add_chapters.php?id=" . $course_id . "'><input type='button' class='admin-btn' value='Add Chapters'></a>";
+            } ?>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeVideo(url, title, checkboxId) {
+        const videoFrame = document.getElementById("videoFrame");
+        const videoTitle = document.getElementById("video-title");
+        const videoArea = document.getElementById("video-area");
+        const contentArea = document.getElementById("content-area");
+
+        if (videoFrame && videoTitle && videoArea && contentArea) {
+            // Reset video
+            const autoplayUrl = url.includes("?") ? url + "&autoplay=1&mute=1" : url + "?autoplay=1&mute=1";
+            videoFrame.src = autoplayUrl;
+            videoTitle.textContent = title;
+            
+            // Show video area and clear quiz
+            videoArea.style.display = "block";
+            contentArea.innerHTML = "";  // Clear the quiz from bottom
+        }
+
+        const checkbox = document.getElementById(checkboxId);
+        if (checkbox) checkbox.checked = true;
+
+        const allCheckboxes = document.querySelectorAll(".checks");
+        const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+
+        if (allChecked) {
+            document.getElementById("completion-message").style.display = "block";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        <?php if (isset($_GET['quiz'])) { ?>
+            // If quiz is started, hide video area
+            const videoArea = document.getElementById("video-area");
+            if (videoArea) {
+                videoArea.style.display = "none";
+            }
+        <?php } else { 
+            // If not quiz, load first chapter
+            $chapter_first_result = $conn->query("SELECT * FROM chapters WHERE course_id = $course_id LIMIT 1");
+            $first_chapter = $chapter_first_result->fetch_assoc();
+        ?>
+            changeVideo('<?php echo $first_chapter['link']; ?>', '<?php echo $first_chapter['chapter_name']; ?>', '<?php echo $first_chapter['id']; ?>');
+        <?php } ?>
+    });
+</script>
+

@@ -10,6 +10,9 @@ $row = $result->fetch_assoc();
 $course_id = $row['course_id'];
 // echo $course_id;
 
+
+
+
 $remove_sql = "DELETE FROM quiz WHERE id = '$quiz_id'"; 
 if($conn->query($remove_sql)){
    

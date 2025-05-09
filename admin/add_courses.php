@@ -12,15 +12,19 @@
         $file_name = $_FILES['image']['name'];
         $tmp_name = $_FILES['image']['tmp_name'];
 
-        $sql = "INSERT INTO course (course_name, description, skills, about, image) 
-            VALUES ('$name', '$description', '$skills', '$about', '$file_name')";
-        $conn->query($sql);
+        
 
         $tmp_name = $_FILES['image']['tmp_name'];
     
   
-        $destination = "../uploads/" . $file_name;
-    
+        
+        $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+        $new_name = "img_" . $name . "." . $ext;
+        $destination = "../uploads/" . $new_name;
+
+        $sql = "INSERT INTO course (course_name, description, skills, about, image) 
+            VALUES ('$name', '$description', '$skills', '$about', '$new_name')";
+        $conn->query($sql);
    
         if (move_uploaded_file($tmp_name, $destination)) {
             $sql= "SELECT id from course where course_name='$name'";

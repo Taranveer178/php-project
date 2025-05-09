@@ -17,7 +17,7 @@ include "config.php";
     <h2 class="course-heading">Courses We Offer</h2>
     <div class="index-container-courses">
         <?php
-        $sql = "SELECT * FROM course";
+        $sql = "SELECT * FROM course WHERE deleted_at IS NULL";
         $result = $conn->query($sql);
 
         while ($row = $result->fetch_assoc()) {
@@ -40,7 +40,8 @@ include "config.php";
         ?>
     </div>
     <?php if($_SESSION['role']=='admin')  {
-        echo "<a href='admin\add_courses.php'><input type='button' class='admin-btn' value='Add Course'></a>";
+        echo "<a href='admin/add_courses.php'><input type='button' class='admin-btn' value='Add Course'></a>";
+        echo "<a href='admin/recover_courses.php'><input type='button' class='admin-btn' style='margin-left:20px;' value='♻ Recover'></a>";
     }?>
 </section>
 

@@ -993,7 +993,7 @@ input[type="submit"][name="quiz"]:hover {
 /* dashboard table */
 
 
-.feedback-table {
+.feedback-table, .enroll-table{
     width: 70%;
     border-collapse: collapse;
     padding-top: 50px;
@@ -1004,7 +1004,7 @@ input[type="submit"][name="quiz"]:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.feedback-header {
+.feedback-header, .enroll-header {
     background-color: #007BFF;
     color: white;
     text-transform: uppercase;
@@ -1017,7 +1017,7 @@ input[type="submit"][name="quiz"]:hover {
     background-color: #f1f1f1;
 }
 
-.feedback-cell {
+.feedback-cell, .enroll-cell {
     padding: 12px 15px;
     border-bottom: 1px solid #ddd;
     vertical-align: top;

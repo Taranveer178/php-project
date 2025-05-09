@@ -27,7 +27,8 @@ if (!isset($_SESSION['user_id'])) {
            
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
-            $chapter_id= $row['id'];
+            $chapter_id= $row['id']??'';
+
 
             // $username = $_SESSION['name'];
             $user_id=$_SESSION['user_id'];
@@ -57,9 +58,9 @@ if (!isset($_SESSION['user_id'])) {
                 } 
 
 }}
-else{
-    $chapter_num= 1;
-}
+// else{
+//     $chapter_num= 1;
+// }
 
 
 if (isset($_GET['id'])) {
@@ -125,7 +126,7 @@ if (isset($_GET['id'])) {
                 <h3>Start Learning</h3>
                 <ul>
                 <?php
-                $chapter_sidebar_result = $conn->query("SELECT * FROM chapters WHERE course_id = $course_id");
+                $chapter_sidebar_result = $conn->query("SELECT * FROM chapters WHERE course_id = $course_id AND deleted_at IS NULL ORDER BY Chapter_number ASC");
                 while ($chapter_row = $chapter_sidebar_result->fetch_assoc()) {
                     $title = $chapter_row['chapter_name'];
                     $chapter_id = $chapter_row['id']; 
@@ -138,9 +139,10 @@ if (isset($_GET['id'])) {
                         <a href="enroll.php?id=<?php echo $course_id; ?>&chapter_id=<?php echo $chapter_id; ?>" style="text-decoration:none; color:black; display:flex; align-items:center;">
 
                             <input class="checks" type="checkbox"  style="margin-right:10px;" <?php echo $checked;?>>
-                            <span><?php echo $title; ?></span>
+                            <?php echo $title; ?>
+                        </a>
                             <?php if ($_SESSION['role'] == 'admin') { ?>
-                                <button onclick="window.location.href='admin/remove_chapters.php?id=<?php echo $chapter_id; ?>'" style="margin-left:auto;" class="delete-btn">Delete</button>
+                                <button style='position:relative; margin-left:160px;' onclick="window.location.href='admin/remove_chapters.php?id=<?php echo $chapter_id; ?>'" style="margin-left:auto;" class="delete-btn">Delete</button>
                             <?php } ?>
                         </a>
                     </li>
@@ -226,8 +228,27 @@ if (isset($_GET['id'])) {
                                     
                              <a href="certificate.php?id=<?php echo $course_id ?>">
                                 <button class="quiz_end_button">Download Certificate</button>
+
                             </a> 
-                            <?php } ?>
+                            <?php
+                            $select_sql= "SELECT completed from enrolled WHERE user_id= $user_id";
+                            $select_result= $conn->query($select_sql);
+                            $select_row= $select_result->fetch_assoc();
+                            $completed= $select_row['completed'] ?? '';
+                            $completed_array= explode(' ', $completed);
+                            
+                            if(!in_array($course_id, $completed_array)){
+                                
+
+                            $new_completed = $completed . " $course_id";
+                            // echo "<br>". $new_completed;
+                            // echo $user_id;  
+                            $update_sql= "UPDATE enrolled SET completed = '$new_completed' WHERE user_id= $user_id";
+                            if($conn->query($update_sql)){
+                                echo "updated";}
+                          
+
+                             } }    ?>
                 </ul>
                
             </div>
@@ -240,51 +261,123 @@ if (isset($_GET['id'])) {
                     $chapter_id= $_GET['chapter_id'];
                     // echo $chapter_id;
                     
-                $sql= "SELECT Chapter_number from chapters WHERE id= $chapter_id";
-                $result=$conn->query($sql);
-                $row=$result->fetch_assoc();
-                $chapter_num= $row['Chapter_number'];
+                    $sql= "SELECT Chapter_number from chapters WHERE id= $chapter_id";
+                    $result=$conn->query($sql);
+                    $row=$result->fetch_assoc();
+                    $chapter_num= $row['Chapter_number'];
+                    
 
                 }
+
+
                 
+                    class Chapter{
+
+                        public function getFirstChapterByNum($chapter_num){
+                            global $conn;
+                            global $course_id;
+                            // echo "hello";
+                            $sql= "SELECT * from chapters WHERE Chapter_number= $chapter_num AND course_id= $course_id AND deleted_at IS NULL";
+                            $result= $conn->query($sql);
+                            if($result->num_rows>0){
+                                $row = $result->fetch_assoc();
+                                return $row;
+                            }
+
+                        }
+
+                        public function getChapterById($chapter_id){
+                            global $conn;
+                            global $course_id;
+                            echo $chapter_id;
+                            $sql = "SELECT * FROM chapters WHERE course_id = $course_id AND deleted_at IS NULL ORDER BY Chapter_number ASC LIMIT 1";
+                            // $sql = "SELECT * from chapters WHERE id = $chapter_id AND deleted_at IS NULL";
+                            $result = $conn->query($sql);
+                            if($result->num_rows>0){
+                                $row = $result->fetch_assoc();
+                                return $row;
+                            }
+                        
+                        }
+                    }
+
+                    $chapter = new Chapter();
+                    
+                   
+                    // echo "Chapter number is ".$chapter_num,"<br>";
+                    
+                    if(isset($chapter_num)){
+                        // echo "chapter is".$chapter_num;
+                   
+                    $chapterData = $chapter->getFirstChapterByNum($chapter_num);}
+                   
+                    elseif(isset($chapter_id)){
+                    $chapterData = $chapter->getChapterById($chapter_id);}
+                    
+                    if($chapterData)
+                                    
+               
             
-            $sql= "SELECT * from chapters where course_id =$course_id && Chapter_number=$chapter_num";
-            if($result=$conn->query($sql))
-            $row_count = $result->num_rows;
-            if($row_count>0){
-            {
-            
-                $row = $result->fetch_assoc();
+                // if(isset($chapter_num)){
+                //     echo $chapter_num;
+                //     $sql= "SELECT * from chapters where course_id =$course_id && Chapter_number=$chapter_num && deleted_at IS NULL";}
+                // elseif(isset($chapter_id)){
+                //     echo $chapter_id;
+                //     $sql = "SELECT * FROM chapters WHERE course_id = $course_id AND deleted_at IS NULL ORDER BY Chapter_number ASC LIMIT 1";
+
+                // }
+                // if($result=$conn->query($sql))
+                // $row_count = $result->num_rows;
+                // if($row_count>0)
+                {
+                
+                    $row = $result->fetch_assoc();
               
                
-                echo "<h2 id='video-title'>".$row['chapter_name']."</h2>";?>
+                    echo "<h2 id='video-title'>".$chapterData['chapter_name']."</h2>";?>
 
                
-            <div id="video-area" style="margin-bottom: 30px;">
-            <iframe 
-                id="videoFrame" 
-                width="100%" 
-                height="400"  
-                src="<?php echo $row['link'] . '&autoplay=1&mute=1'; ?>" 
-                allow="autoplay; encrypted-media" 
-                allowfullscreen>
-            </iframe>
+                    <div id="video-area" style="margin-bottom: 30px;">
+                         <iframe 
+                            id="videoFrame" 
+                            width="100%" 
+                            height="400"  
+                            src="<?php echo $chapterData['link'] . '&autoplay=1&mute=1'; ?>" 
+                            allow="autoplay; encrypted-media" 
+                            allowfullscreen>
+                        </iframe>
 
-            </div>
+                    </div>
             
-    <?php
-            
-                $chapter_num=$chapter_num+1;
+                     <?php
+                        if(isset($chapter_num)){
+                            
+                        $chapter_num=$chapter_num+1;
+                        }
+                        else{
+                            $chapter_num=2;
+                        }
 
        
                 
-?>
-                <form action='enroll.php' method='GET'>
+                        ?>
+                    <form action='enroll.php' method='GET'>
+                    <input type='hidden' name='id' value='<?php echo $course_id?>'>
+                    <input type="hidden" name="chapter_num" value='<?php echo $chapter_num-2?>'>
+                    
+                    <input type="submit"  value="PREVIOUS">
+                    
+                    </form>
+
+                    <form action='enroll.php' method='GET'>
                     <input type='hidden' name='id' value='<?php echo $course_id?>'>
                     <input type="hidden" name="chapter_num" value='<?php echo $chapter_num?>'>
+                    
                     <input type="submit"  value="NEXT">
-               </a></form>
-           <?php }}
+                    
+                    </form>
+                <?php }
+               
         else{
 
             echo "<div id='completion-message'  style= 'color: green; font-weight: bold; margin-top: 20px;'>Congrats you completed all chapters</div>";
@@ -298,73 +391,73 @@ if (isset($_GET['id'])) {
                 <?php
                 if (isset($_GET['quiz'])) {
                    
-$quiz_id = (int) $_GET['quiz_id'];
-$question_num = isset($_GET['question_num']) ? $_GET['question_num'] : 1;
-if (isset($_GET['quiz']) ) {
+        $quiz_id = (int) $_GET['quiz_id'];
+        $question_num = isset($_GET['question_num']) ? $_GET['question_num'] : 1;
+        if (isset($_GET['quiz']) ) {
 
-    $check_result="SELECT * from quiz_result where user_id= $user_id and quiz_id= $quiz_id";
-    $check_result= $conn->query($check_result);
-    if($check_result->num_rows>0){
-        echo "<p><b>Quiz completed!</b></p>";
-      }
-    else{
+        $check_result="SELECT * from quiz_result where user_id= $user_id and quiz_id= $quiz_id";
+        $check_result= $conn->query($check_result);
+        if($check_result->num_rows>0){
+            echo "<p><b>Quiz completed!</b></p>";
+        }
+        else{
 
-    $sql_ques = "SELECT * from questions where quiz_id = $quiz_id";
-    $result_ques = $conn->query($sql_ques);
-    $total_questions = $result_ques->num_rows;
-    echo "Total questions: ".$total_questions." | Maximum Marks: ".$total_points;
-    if($total_questions==0){
-        echo "<br>No questions available";
+        $sql_ques = "SELECT * from questions where quiz_id = $quiz_id";
+        $result_ques = $conn->query($sql_ques);
+        $total_questions = $result_ques->num_rows;
+        echo "Total questions: ".$total_questions." | Maximum Marks: ".$total_points;
+        if($total_questions==0){
+            echo "<br>No questions available";
+            
+        }else{
+        $each_question_points = $total_points / $total_questions;}
         
-    }else{
-    $each_question_points = $total_points / $total_questions;}
-    
 
-    $sql_quiz = "SELECT * from questions where quiz_id = $quiz_id and question_num = $question_num";
-    $result_quiz = $conn->query($sql_quiz);
-    $row_quiz = $result_quiz->fetch_assoc();
-    $question_id = $row_quiz['id']?? '';
+        $sql_quiz = "SELECT * from questions where quiz_id = $quiz_id and question_num = $question_num";
+        $result_quiz = $conn->query($sql_quiz);
+        $row_quiz = $result_quiz->fetch_assoc();
+        $question_id = $row_quiz['id']?? '';
 
-    if ($row_quiz) {
-?>
-        <h1>QUIZ</h1>
-        <?php if($_SESSION['role']=='admin'){ ?>
+        if ($row_quiz) {
+    ?>
+            <h1>QUIZ</h1>
+            <?php if($_SESSION['role']=='admin'){ ?>
 
-        <a href="admin/quiz.php?id=<?php echo $quiz_id; ?>"><button class="remove-btn" style="margin-left:500px;">Add questions</button></a>
+            <a href="admin/quiz.php?id=<?php echo $quiz_id; ?>"><button class="remove-btn" style="margin-left:500px;">Add questions</button></a>
 
 
-        <br><br><a href="admin/remove_question.php?id=<?php echo $question_id; ?>"><button class="remove-btn" style="margin-left:500px;">Remove</button></a>
+            <br><br><a href="admin/remove_question.php?id=<?php echo $question_id; ?>"><button class="remove-btn" style="margin-left:500px;">Remove</button></a>
 
-        <a href="admin/edit_question.php?id=<?php echo $question_id; ?>"><button class="remove-btn" >Edit</button></a>
-        <?php } ?>
-        <form action="enroll.php" method="GET"><br><br>
-            <p>
-                <strong>Q<?php echo $question_num; ?>:</strong> <?php echo $row_quiz['question']; ?><br><br>
-                <?php
-                $sql_ans = "SELECT * from answers where question_id = $question_id";
-                $result_answers = $conn->query($sql_ans);
-                while ($row_answers = $result_answers->fetch_assoc()) {
-                    $value = $row_answers['id'];
-                ?>
-                    <label><input type='radio' value='<?php echo $value; ?>' name='options'
-                    <?php if (isset($_GET['options'])) echo 'disabled';  
-                    if (isset($_GET['options']) && $_GET['options'] == $value) echo ' checked'; ?>
+            <a href="admin/edit_question.php?id=<?php echo $question_id; ?>"><button class="remove-btn" >Edit</button></a>
+            <?php } ?>
+            <form action="enroll.php" method="GET"><br><br>
+                <p>
+                    <strong>Q<?php echo $question_num; ?>:</strong> <?php echo $row_quiz['question']; ?><br><br>
+                    <?php
+                    $sql_ans = "SELECT * from answers where question_id = $question_id";
+                    $result_answers = $conn->query($sql_ans);
+                    while ($row_answers = $result_answers->fetch_assoc()) {
+                        $value = $row_answers['id'];
+                    ?>
+                        <label><input type='radio' value='<?php echo $value; ?>' name='options'
+                        <?php if (isset($_GET['options'])) echo 'disabled';  
+                        if (isset($_GET['options']) && $_GET['options'] == $value) echo ' checked'; ?>
+                        
+                        required> <?php echo htmlspecialchars($row_answers['option']); ?></label><br>
+                    <?php } ?>
                     
-                    required> <?php echo htmlspecialchars($row_answers['option']); ?></label><br>
-                <?php } ?>
-                
-                <input type='hidden' name='quiz_id' value='<?php echo $quiz_id; ?>'>
-                <input type="hidden" name="id" value="<?php echo $course_id;?>">
-                <input type='hidden' name='quiz' value='1'>
-                <input type='hidden' name='total_points_earned' value='<?php echo $total_points_earned; ?>'> 
-                <br>
-                <input type='hidden' name='question_num' value='<?php echo $question_num; ?>'>
-                <br>
-                <input type='submit' value='Submit'>
-            </p>
-        </form>
+                    <input type='hidden' name='quiz_id' value='<?php echo $quiz_id; ?>'>
+                    <input type="hidden" name="id" value="<?php echo $course_id;?>">
+                    <input type='hidden' name='quiz' value='1'>
+                    <input type='hidden' name='total_points_earned' value='<?php echo $total_points_earned; ?>'> 
+                    <br>
+                    <input type='hidden' name='question_num' value='<?php echo $question_num; ?>'>
+                    <br>
+                    <input type='submit' value='Submit'>
+                </p>
+            </form>
 
-        <?php
+            <?php
         
         if (isset($_GET['options'])) {
             $option_id = $_GET['options'];
@@ -483,6 +576,7 @@ if (isset($_GET['quiz']) ) {
 
             <?php if ($_SESSION['role'] == 'admin') {
                 echo "<a href='admin/add_chapters.php?id=" . $course_id . "'><input type='button' class='admin-btn' style='position:absolute; top:120px; right:50px;' value='Add Chapters'></a>";
+                echo "<a href='admin/remove_chapters.php?course_id=" . $course_id . "'><input type='button' class='admin-btn' style='position:absolute; top:170px; right:50px;' value='Recover Chapters'></a>";
             }?>
         </div>
     </div>

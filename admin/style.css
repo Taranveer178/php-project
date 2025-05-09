@@ -342,6 +342,11 @@ h1 {
     text-align: left;
     border-top: 1px solid #ddd;
 }
+.table_data td a{
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+}
 
 /* Checkbox column */
 .table_data input[type="checkbox"] {

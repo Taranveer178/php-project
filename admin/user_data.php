@@ -53,7 +53,9 @@ $result=$conn->query($sql);
     {
         if(isset($_POST["delete_ids"])){
         $ids_to_delete = implode(",", $_POST["delete_ids"]);
-         $delete_sql = "DELETE FROM login WHERE id IN ($ids_to_delete)";
+        // $remove_sql= "UPDATE users SET deleted_at= NOW() WHERE id IN ($ids_to_delete)";
+        // $conn->query($remove_sql);
+         $delete_sql = "DELETE FROM users WHERE id IN ($ids_to_delete)";
          $conn->query($delete_sql);
         }
         

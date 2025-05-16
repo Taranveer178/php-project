@@ -38,9 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $id= $row['id'];
 
 
-            $sql= "INSERT INTO role (username, user_id) VALUES ('$name', '$id')";
-            $conn->query($sql);
-            header("Location: index.php");
+            // $sql= "INSERT INTO role (username, user_id) VALUES ('$name', '$id')";
+            // $conn->query($sql);
+            // header("Location: index.php");
 
         }
     }

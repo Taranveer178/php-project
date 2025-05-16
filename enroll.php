@@ -12,6 +12,7 @@ $total_points= $row['total_points'];
 $passing_marks= $row['passing_marks'];}
 
 $total_points_earned = $_GET['total_points_earned']??0; 
+$chapter_num = $_GET['chapter_num'] ?? 1;
 
 
 if (!isset($_SESSION['user_id'])) {
@@ -33,31 +34,9 @@ if (!isset($_SESSION['user_id'])) {
             // $username = $_SESSION['name'];
             $user_id=$_SESSION['user_id'];
             
-            $sql= "SELECT completed_chapters from enrolled WHERE user_id='$user_id'";
-            $result= $conn->query($sql);
-            $row=$result->fetch_assoc();
-            $completed_chapters =$row['completed_chapters'] ?? '';
+         
 
-
-            $completed_chapters_array= explode(separator: ' ',string: $completed_chapters);
-
-            if (!in_array($chapter_id, $completed_chapters_array)) {
-
-                $completed_chapters= "$completed_chapters"." $chapter_id"; 
-                $sql = "UPDATE enrolled SET completed_chapters = '$completed_chapters' WHERE user_id = '$user_id'";
-                if ($conn->query($sql)) {
-                
-                    $sql= "SELECT * from chapters where id=$chapter_id";
-                    $results=$conn->query($sql);    
-                    $rows=$results->fetch_assoc();
-                    $course_id = $rows['course_id'];
-                
-
-                    header("Location: enroll.php?id=$course_id&chapter_num=$chapter_num ");
-                    exit;
-                } 
-
-}}
+}
 // else{
 //     $chapter_num= 1;
 // }
@@ -231,10 +210,10 @@ if (isset($_GET['id'])) {
 
                             </a> 
                             <?php
-                            $select_sql= "SELECT completed from enrolled WHERE user_id= $user_id";
+                            $select_sql= "SELECT completed_quiz from enrolled WHERE user_id= $user_id";
                             $select_result= $conn->query($select_sql);
                             $select_row= $select_result->fetch_assoc();
-                            $completed= $select_row['completed'] ?? '';
+                            $completed= $select_row['completed_quiz'] ?? '';
                             $completed_array= explode(' ', $completed);
                             
                             if(!in_array($course_id, $completed_array)){
@@ -243,10 +222,8 @@ if (isset($_GET['id'])) {
                             $new_completed = $completed . " $course_id";
                             // echo "<br>". $new_completed;
                             // echo $user_id;  
-                            $update_sql= "UPDATE enrolled SET completed = '$new_completed' WHERE user_id= $user_id";
-                            if($conn->query($update_sql)){
-                                echo "updated";}
-                          
+                            $update_sql= "UPDATE enrolled SET completed_quiz = '$new_completed' WHERE user_id= $user_id";
+                            
 
                              } }    ?>
                 </ul>
@@ -273,7 +250,7 @@ if (isset($_GET['id'])) {
                 
                     class Chapter{
 
-                        public function getFirstChapterByNum($chapter_num){
+                         public function getFirstChapterByNum($chapter_num){
                             global $conn;
                             global $course_id;
                             // echo "hello";
@@ -283,9 +260,13 @@ if (isset($_GET['id'])) {
                                 $row = $result->fetch_assoc();
                                 return $row;
                             }
+                            else{
+                                echo "No chapter found";
+                            }
 
                         }
 
+                       
                         public function getChapterById($chapter_id){
                             global $conn;
                             global $course_id;
@@ -303,14 +284,15 @@ if (isset($_GET['id'])) {
 
                     $chapter = new Chapter();
                     
-                   
-                    // echo "Chapter number is ".$chapter_num,"<br>";
+                 
                     
-                    if(isset($chapter_num)){
-                        // echo "chapter is".$chapter_num;
                    
-                    $chapterData = $chapter->getFirstChapterByNum($chapter_num);}
+                       
                    
+                   
+                   if(isset($chapter_num)){
+                    $chapterData = $chapter->getFirstChapterByNum($chapter_num);
+                   }
                     elseif(isset($chapter_id)){
                     $chapterData = $chapter->getChapterById($chapter_id);}
                     
@@ -329,6 +311,7 @@ if (isset($_GET['id'])) {
                 // if($result=$conn->query($sql))
                 // $row_count = $result->num_rows;
                 // if($row_count>0)
+
                 {
                 
                     $row = $result->fetch_assoc();
@@ -349,39 +332,50 @@ if (isset($_GET['id'])) {
 
                     </div>
             
-                     <?php
-                        if(isset($chapter_num)){
+                    <div class="button-div">
+                        <div class="previous-div">
+                            <form action='enroll.php' method='GET'>
+                            <input type='hidden' name='id' value='<?php echo $course_id?>'>
+                            <input type="hidden" name="chapter_num" value='<?php 
+                            if($chapter_num==1){
+                                echo $chapter_num;
+                            }
+                            else{
+                                echo $chapter_num-1;
+                            }
+                            ?>'>
                             
-                        $chapter_num=$chapter_num+1;
-                        }
-                        else{
-                            $chapter_num=2;
-                        }
+                            <input type="submit"  value="PREVIOUS">
+                            
+                            </form>
+                        </div>
 
-       
-                
-                        ?>
-                    <form action='enroll.php' method='GET'>
-                    <input type='hidden' name='id' value='<?php echo $course_id?>'>
-                    <input type="hidden" name="chapter_num" value='<?php echo $chapter_num-2?>'>
-                    
-                    <input type="submit"  value="PREVIOUS">
-                    
-                    </form>
+                         <div class="next-div">
 
-                    <form action='enroll.php' method='GET'>
-                    <input type='hidden' name='id' value='<?php echo $course_id?>'>
-                    <input type="hidden" name="chapter_num" value='<?php echo $chapter_num?>'>
+                            <form action='chapter_done.php' method='GET'>
+                            <input type='hidden' name='id' value='<?php echo $course_id?>'>
+                            <input type="hidden" name="chapter_num" value='<?php echo $chapter_num?>'>
+                            
+                            <input type="submit"  value="NEXT">
+                            
+                            </form>
+                        </div>
+                    </div>
+
                     
-                    <input type="submit"  value="NEXT">
+            <?php if ($_SESSION['role'] == 'admin') {
+                echo "<a href='admin/edit_course.php?id=" . $course_id . "'><input type='button' class='admin-btn' style='margin-left:600px;' value='Edit Course'></a>";
+                  }?>
                     
-                    </form>
-                <?php }
-               
+           <?php }     
         else{
 
             echo "<div id='completion-message'  style= 'color: green; font-weight: bold; margin-top: 20px;'>Congrats you completed all chapters</div>";
+               if ($_SESSION['role'] == 'admin') { 
+                 echo "<a href='admin/edit_course.php?id=" . $course_id . "'><input type='button' class='admin-btn' style='margin-left:600px;' value='Edit Course'></a>";
                
+                }
+                             
         }}?>
 
                
@@ -399,6 +393,10 @@ if (isset($_GET['id'])) {
         $check_result= $conn->query($check_result);
         if($check_result->num_rows>0){
             echo "<p><b>Quiz completed!</b></p>";
+            echo "<a href='admin/undoquiz.php?id=$quiz_id&course_id=$course_id'><button class='remove-btn' >Undo Quiz</button></a><br>";
+            echo "<a href='admin/quiz.php?id=$quiz_id'><button class='remove-btn' style='margin-left:500px;'>Add MCQ</button></a><br><br>";
+            echo "<a href='admin/add_true.php?id=$quiz_id'><button class='remove-btn' style='margin-left:500px;'>Add True/False</button></a>";
+
         }
         else{
 
@@ -423,7 +421,8 @@ if (isset($_GET['id'])) {
             <h1>QUIZ</h1>
             <?php if($_SESSION['role']=='admin'){ ?>
 
-            <a href="admin/quiz.php?id=<?php echo $quiz_id; ?>"><button class="remove-btn" style="margin-left:500px;">Add questions</button></a>
+            <a href="admin/quiz.php?id=<?php echo $quiz_id; ?>"><button class="remove-btn" style="margin-left:500px;">Add MCQ</button></a><br><br>
+            <a href='admin/add_true.php?id=<?php echo $quiz_id; ?>'><button class='remove-btn' style='margin-left:500px;'>Add True/False</button></a>
 
 
             <br><br><a href="admin/remove_question.php?id=<?php echo $question_id; ?>"><button class="remove-btn" style="margin-left:500px;">Remove</button></a>
@@ -491,9 +490,12 @@ if (isset($_GET['id'])) {
                         <?php
                     } else {
                         echo "<p style='color:blue'><b>🎉 Quiz Completed!</b></p>"; ?>
-                        <p>SCORE</p>
+                        
+                        
 
-                        <?php echo $total_points_earned; ?> out of <?php echo $total_points;?><br> 
+                        <p>SCORE</p>
+                        <?php $total_points_earned=round($total_points_earned, 2);?>
+                        <?php echo round($total_points_earned); ?> out of <?php echo $total_points;?><br> 
                         <?php if($total_points_earned>= $passing_marks){
                             echo "<p style='color:green'><b>✅ You have passed the quiz!</b></p>";
                                 $insert_result="INSERT into quiz_result (user_id, quiz_id, course_id, score) VALUE ('$user_id', '$quiz_id','$course_id', '$total_points_earned')";
@@ -567,17 +569,17 @@ if (isset($_GET['id'])) {
         }
     } else {
         echo "<p><b>Quiz completed!</b></p>";
+    
         if($_SESSION['role']=='admin'){
-            echo "<a href='admin/quiz.php?id=$quiz_id'><button class='remove-btn' style='margin-left:500px;'>Add questions</button></a>";
+            echo "<a href='admin/quiz.php?id=$quiz_id'><button class='remove-btn' style='margin-left:500px;'>Add MCQ</button></a><br><br>";
+             echo "<a href='admin/add_true.php?id=$quiz_id'><button class='remove-btn' style='margin-left:500px;'>Add True/False</button></a>";
+
         }
     }
 }}}?>
 
 
-            <?php if ($_SESSION['role'] == 'admin') {
-                echo "<a href='admin/add_chapters.php?id=" . $course_id . "'><input type='button' class='admin-btn' style='position:absolute; top:120px; right:50px;' value='Add Chapters'></a>";
-                echo "<a href='admin/remove_chapters.php?course_id=" . $course_id . "'><input type='button' class='admin-btn' style='position:absolute; top:170px; right:50px;' value='Recover Chapters'></a>";
-            }?>
+           
         </div>
     </div>
    

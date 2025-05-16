@@ -11,16 +11,18 @@ $role= $row['role'];
 
 if($role=='admin'){
     $sql= "UPDATE users set role ='user' WHERE id=$id";
-    if($conn->query($sql))
-    {
-        echo "role updated";
-    }
+    
 }
 elseif($role=='user'){
     $sql= "UPDATE users set role ='admin' WHERE id=$id";
-    if($conn->query($sql))
-    {
-        echo "role updated";
-    }
+    
+}
+
+if($conn->query($sql)){
+    header("Location: user_data.php?id=$id");
+    exit();
+}
+else{
+    echo "Error updating record: " . $conn->error;
 }
 ?>

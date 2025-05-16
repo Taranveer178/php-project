@@ -81,7 +81,7 @@ if (isset($_GET['course_id'])) {
             echo "</tr>";
         }
         echo "</table>
-         <a href=../enroll.php?id=".$course_id." <button>Go Back</button>";
+         <a href=edit_course.php?id=".$course_id." <button>Go Back</button>";
     } else {
         echo "<p>No deleted chapters to recover.</p>
          <a href=../enroll.php?id=".$course_id." <button>Go Back</button>";

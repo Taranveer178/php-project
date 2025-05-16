@@ -7,6 +7,8 @@ if (!$conn){
 echo "<h1>Admin Panel</h1>";
 $sql ="SELECT * from users ";
 $result=$conn->query($sql);
+
+
 // $row=$result->fetch_assoc();
 
  echo 

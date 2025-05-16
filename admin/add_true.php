@@ -53,8 +53,12 @@ elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['number_options']) 
     echo "<div class='quiz-question-form'>";
     echo "<h2>Enter Options</h2>";
     echo "<form action='quiz.php?id=$quiz_id' method='POST'>";
-    for ($i = 1; $i <= $number_options; $i++) {
-        echo "<label>Option $i:</label><input type='text' name='options$i' required> ";
+    for ($i = 1; $i <$number_options; $i++) {
+        echo "<label>True</label><input type='hidden' name='options$i' value='True' required> ";
+        echo "<label><input type='checkbox' name='is_correct$i'> Is correct</label><br><br>";
+    }
+    for ($i = 2; $i <= $number_options; $i++) {
+        echo "<label>False</label><input type='hidden' name='options$i' value='False' required> ";
         echo "<label><input type='checkbox' name='is_correct$i'> Is correct</label><br><br>";
     }
     echo "<input type='hidden' name='question' value='" . htmlspecialchars($question) . "'>";
@@ -67,8 +71,8 @@ elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['number_options']) 
 else {
 // ?>
     <div class="quiz-question-form">
-        <h2>Add Quiz Question</h2>
-        <form action="quiz.php?id=<?php echo $quiz_id; ?>" method="POST">
+        <h2>Add True/False</h2>
+        <form action="add_true.php?id=<?php echo $quiz_id; ?>" method="POST">
             <label>Question Number:</label>
             <input type="number" name="question_num" value="<?php
             $sql= "SELECT question_num FROM questions WHERE quiz_id = $quiz_id";
@@ -78,12 +82,11 @@ else {
             
             echo $question_num;
             
-            ?>"
-            required><br><br>
+            ?>"required><br><br>
             <label>Question:</label>
             <input type="text" name="question" required><br><br>
-            <label>Number of options:</label>
-            <input type="number" name="number_options" min="2" max="10" required><br><br>
+            
+            <input type="hidden" name="number_options" value="2"><br><br>
             <input type="submit" value="Next">
         </form>
     </div>

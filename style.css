@@ -726,7 +726,22 @@ body {
 .course-buttons button:hover {
     background-color: #084298;
 }
+.button-div {
+    display: flex;
+    justify-content: space-between; /* Or center/space-around as needed */
+    gap: 20px; /* Optional spacing between buttons */
+    margin-top: 20px;
+}
 
+.button-div form {
+    display: inline-block;
+}
+
+.button-div input[type="submit"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
 
 
 

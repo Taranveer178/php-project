@@ -2,7 +2,8 @@
 $server="localhost";
 $username="root";
 $password="";
-$database="admin";
+$database="php";
+
 
 
 

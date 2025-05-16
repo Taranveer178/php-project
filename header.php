@@ -16,7 +16,7 @@ $id= $row['id'];
 
 
 
-$sql= "SELECT role from role where user_id = '$id'"; 
+$sql= "SELECT role from users where id = '$id'"; 
 $result=$conn->query($sql);
 $row=$result->fetch_assoc();
 

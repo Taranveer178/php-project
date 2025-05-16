@@ -545,3 +545,11 @@ input[type="checkbox"]:not(:checked) {
 .submit-btn:hover {
     background-color: #0056b3;
 }
+
+input[type="text"] {
+        width: 100%;
+        
+        box-sizing: border-box;
+        padding: 8px;
+        font-size: 14px;
+    }

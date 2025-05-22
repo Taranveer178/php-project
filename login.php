@@ -10,18 +10,23 @@ $error = $emailerror = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['input_email'];
-    $password = $_POST['input_password'];
+    $entered_password = $_POST['input_password'];
 
     if (isset($_POST['remember'])) {
         setcookie("email", $email, time() + (86400 * 30), "/");
-        setcookie("password", $password, time() + (86400 * 30), "/");
+        setcookie("password", $entered_password, time() + (86400 * 30), "/");
+    
     }
 
     $sql = "SELECT username, password, id FROM users WHERE email = '$email'";
     $result = $conn->query($sql);
 
     if ($row = $result->fetch_assoc()) {
-        if ($password == $row['password']) {
+        $password = $row['password'];
+        // echo $entered_password;
+        // echo "<br>";
+        // echo $password;
+       if (password_verify($entered_password, $password)) {
             // session_start();
             $_SESSION['name'] = $row['username'];
             $_SESSION['email']=$email;

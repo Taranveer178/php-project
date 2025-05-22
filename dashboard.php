@@ -102,8 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
         </div>
     <?php } ?>
 </div>
-
-<h2>My Enrolled Courses</h2>
+<br><br>
+<h2><center>My Enrolled Courses</center></h2>
 <table border="1" cellpadding="10" cellspacing="0" class="enroll-table">
     <tr class="enroll-row">
         <th class='enroll-header'>Course Name</th>
@@ -142,10 +142,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     ?>
 </table>
 
-
+<br><br>
 
 
 <div class="feedback-table-container">
+    <h2><center>Queries/Feedbacks Given</center></h2>
     <?php
     $name = $_SESSION['name'];
     $sql = "SELECT * FROM feedback WHERE name = '$name'";
@@ -156,7 +157,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
         <th class='feedback-header'>Query</th>
         <th class='feedback-header'>Reply</th>
     </tr>";
-
+    if( $result->num_rows == 0) {
+        echo "<tr class='feedback-row'><td  class='feedback-cell' colspan='2'>No feedback found.</td></tr>";
+    }
+    else{
     while ($row = $result->fetch_assoc()) {
         echo "<tr class='feedback-row'>
             <td class='feedback-cell'>" . $row['query'] . "</td>";
@@ -166,6 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
         } else {
             echo "<td class='feedback-cell'>" . $row['reply'] . "</td></tr>";
         }
+    }
     }
 
     echo "</table>";

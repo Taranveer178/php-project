@@ -22,6 +22,7 @@ $result=$conn->query($sql);
         <th>Date of Birth</th>
         <th>Role</th>
         <th>Change Role</th>
+        <th>View Progress</th>
         <th>Delete <input type='checkbox' onclick='toggleSelectAll(this)'></th>
     </tr>";
     while($row =$result->fetch_assoc()){
@@ -41,6 +42,7 @@ $result=$conn->query($sql);
                         echo "<a href='role.php?id=".$row['id']."' style='text-decoration:none;'><input type='button' class='table-button' value='Make Admin'></a>";
                     }
                     echo  "</td>
+                    <td><a href='view_progress.php?id=".$row['id']."' style='text-decoration:none;'><input type='button' class='table-button' value='View Progress'></a></td>
                     <td><input type='checkbox' name='delete_ids[]' value='".$row["id"]."'></td>
                 </tr>";
                     

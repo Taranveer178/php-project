@@ -204,28 +204,49 @@ if (isset($_GET['id'])) {
                         ?>
 
                                   <p>
-                                    
+                                
+                            <?php 
+                            $check_course_sql= "SELECT * from enrolled where user_id= $user_id";
+                            $check_course_result= $conn->query($check_course_sql);
+                            $check_course_row= $check_course_result->fetch_assoc(); 
+                            $completed_course= $check_course_row['completed'] ?? '';
+
+                            if(in_array($course_id, explode(' ', $completed_course))){
+                                echo "Course completed";
+                                
+                            }
+                            else{
+                               $updated_value = $completed_course . ' ' . $course_id;
+                                // echo $updated_value;
+                                $completed_course_sql="UPDATE enrolled SET completed ='$updated_value' WHERE user_id= $user_id";
+                                $completed_course_result= $conn->query($completed_course_sql);
+                            }
+
+                        
+
+                              ?>
                              <a href="certificate.php?id=<?php echo $course_id ?>">
                                 <button class="quiz_end_button">Download Certificate</button>
 
                             </a> 
                             <?php
-                            $select_sql= "SELECT completed_quiz from enrolled WHERE user_id= $user_id";
-                            $select_result= $conn->query($select_sql);
-                            $select_row= $select_result->fetch_assoc();
-                            $completed= $select_row['completed_quiz'] ?? '';
-                            $completed_array= explode(' ', $completed);
+                            // $select_sql= "SELECT completed_quiz from enrolled WHERE user_id= $user_id";
+                            // $select_result= $conn->query($select_sql);
+                            // $select_row= $select_result->fetch_assoc();
+                            // $completed= $select_row['completed_quiz'] ?? '';
+                            // $completed_array= explode(' ', $completed);
                             
-                            if(!in_array($course_id, $completed_array)){
+                            // if(!in_array($course_id, $completed_array)){
                                 
 
-                            $new_completed = $completed . " $course_id";
-                            // echo "<br>". $new_completed;
-                            // echo $user_id;  
-                            $update_sql= "UPDATE enrolled SET completed_quiz = '$new_completed' WHERE user_id= $user_id";
+                            // $new_completed = $completed . " $course_id";
+                            // // echo "<br>". $new_completed;
+                            // // echo $user_id;  
+                            // $update_sql= "UPDATE enrolled SET completed_quiz = '$new_completed' WHERE user_id= $user_id";
                             
 
-                             } }    ?>
+                             //}
+                              }    ?>
                 </ul>
                
             </div>
@@ -392,10 +413,26 @@ if (isset($_GET['id'])) {
         $check_result="SELECT * from quiz_result where user_id= $user_id and quiz_id= $quiz_id";
         $check_result= $conn->query($check_result);
         if($check_result->num_rows>0){
+
             echo "<p><b>Quiz completed!</b></p>";
+
+            $sql = "SELECT score FROM quiz_result WHERE user_id = $user_id AND quiz_id = $quiz_id";
+                $result = $conn->query($sql);
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $score = $row['score'];
+                    echo "<h2>Your Score: $score</h2>";
+                    echo "<p>Thank you for taking the quiz!</p>";
+                
+                } else {
+                    echo "<p>No quiz results found for this user.</p>";
+                    exit;
+                }           
+
             echo "<a href='admin/undoquiz.php?id=$quiz_id&course_id=$course_id'><button class='remove-btn' >Undo Quiz</button></a><br>";
             echo "<a href='admin/quiz.php?id=$quiz_id'><button class='remove-btn' style='margin-left:500px;'>Add MCQ</button></a><br><br>";
             echo "<a href='admin/add_true.php?id=$quiz_id'><button class='remove-btn' style='margin-left:500px;'>Add True/False</button></a>";
+
 
         }
         else{

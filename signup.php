@@ -28,7 +28,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($validation) {
-        $sql = "INSERT INTO users (username, email, password, gender, dob) VALUES ('$name', '$email', '$password', '$gender', '$dob')";
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO users (username, email, password, gender, dob) VALUES ('$name', '$email', '$hashedPassword', '$gender', '$dob')";
         if ($conn->query($sql)) {
            
             
@@ -40,7 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // $sql= "INSERT INTO role (username, user_id) VALUES ('$name', '$id')";
             // $conn->query($sql);
-            // header("Location: index.php");
+            header("Location: login.php");
+            exit;
 
         }
     }

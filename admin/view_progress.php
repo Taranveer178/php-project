@@ -48,7 +48,7 @@ $id = $_GET['id'];
 
             if ($course_result && $course_row = $course_result->fetch_assoc()) {
                 $course_name = htmlspecialchars($course_row['course_name']);
-                $status = in_array($course_id, $completed_courses) ? "Completed" : "In Progress <a href='enroll.php?id=$course_id'><input type='button' value='Continue'></a>";
+                $status = in_array($course_id, $completed_courses) ? "Completed" : "In Progress";
                 $quiz_sql = "
                         SELECT q.quiz_name 
                         FROM quiz_result qr 

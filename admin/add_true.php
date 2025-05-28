@@ -33,13 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['options1'])) {
     }
 
     echo "<p class='quiz-success'>✅ Question and options saved successfully!</p>";
-    $sql= "SELECT course_id FROM quiz WHERE id = '$quiz_id'";
+    $sql= "SELECT course_id,quiz_name FROM quiz WHERE id = '$quiz_id'";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
     $course_id = $row['course_id'];
-    $sql= "SELECT quiz_name FROM quiz WHERE id = '$quiz_id'";
-    $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
     $quiz_name = $row['quiz_name'];
     header("Location: ../enroll.php?quiz_id=$quiz_id&id=$course_id&quiz=$quiz_name");
     exit;

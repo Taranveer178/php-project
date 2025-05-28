@@ -1,7 +1,7 @@
 <?php 
 include "header.php"; 
 include "config.php";
-
+include "admin/delete.php";
 
 if(isset($_GET['quiz_id'])){
 $quiz_id = $_GET['quiz_id'] ?? null;
@@ -46,6 +46,7 @@ if (isset($_GET['id'])) {
     $course_id = $_GET['id'];
     $question_num = isset($_GET['question_num']) ? $_GET['question_num'] : 1;
 
+   
     $sql = "SELECT * FROM course WHERE id = $course_id";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
@@ -58,6 +59,7 @@ if (isset($_GET['id'])) {
     
     $check_sql = "SELECT * FROM enrolled WHERE user_id = '$user_id'";
     $check_result = $conn->query($check_sql);
+
 
     if ($check_result->num_rows == 0) {
     $insert_sql="INSERT into enrolled (user_id) VALUE ('$user_id')";
@@ -168,10 +170,12 @@ if (isset($_GET['id'])) {
                                
 
                                  ?>
-                                <?php if ($_SESSION['role'] == 'admin') { ?>
-                                   
+                                <?php if ($_SESSION['role'] == 'admin') {
+                                    $table='quiz';
+                                    $delete_id=$quiz_id; ?>
+                                
                                 <input type="button" value="Remove"
-                                    onclick="window.location.href='admin/remove_quiz.php?id=<?php echo $quiz_id; ?>'"
+                                    onclick="window.location.href='enroll.php?table=<?php echo $table; ?>&delete_id=<?php echo $delete_id;?>&id=<?php echo $course_id;?>'"
                                     style="margin-left: auto;" class="delete-btn">
 
                             
@@ -416,7 +420,7 @@ if (isset($_GET['id'])) {
 
             echo "<p><b>Quiz completed!</b></p>";
 
-            $sql = "SELECT score FROM quiz_result WHERE user_id = $user_id AND quiz_id = $quiz_id";
+            $sql = "SELECT * FROM quiz_result WHERE user_id = $user_id AND quiz_id = $quiz_id";
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
                     $row = $result->fetch_assoc();
@@ -428,8 +432,10 @@ if (isset($_GET['id'])) {
                     echo "<p>No quiz results found for this user.</p>";
                     exit;
                 }           
-
-            echo "<a href='admin/undoquiz.php?id=$quiz_id&course_id=$course_id'><button class='remove-btn' >Undo Quiz</button></a><br>";
+                $table='quiz_result';
+                // $row=$result->fetch_assoc();
+                $delete_id=$row['id'];
+            echo "<a href='enroll.php?delete_id=$delete_id&table=$table&id=$course_id&quiz_id=$quiz_id&quiz=$quiz_name'><button class='remove-btn' >Undo Quiz</button></a><br>";
             echo "<a href='admin/quiz.php?id=$quiz_id'><button class='remove-btn' style='margin-left:500px;'>Add MCQ</button></a><br><br>";
             echo "<a href='admin/add_true.php?id=$quiz_id'><button class='remove-btn' style='margin-left:500px;'>Add True/False</button></a>";
 

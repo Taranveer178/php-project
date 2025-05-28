@@ -1,6 +1,7 @@
 <?php
 include "../config.php";
 include "header.php";
+include "delete.php";
 
 // -----------------------------
 // Handle recover/delete actions first
@@ -17,8 +18,12 @@ if (isset($_GET['action']) && isset($_GET['chapter_id']) && isset($_GET['course_
 
     if ($action === 'recover') {
         $sql = "UPDATE chapters SET deleted_at = NULL WHERE id = $chapter_id";
+        $conn->query($sql);
     } elseif ($action === 'delete') {
-        $sql = "DELETE FROM chapters WHERE id = $chapter_id";
+        $table= 'chapters';
+        $delete_id=$chapter_id;
+        $delete_obj->delete($table, $delete_id);
+        // $sql = "DELETE FROM chapters WHERE id = $chapter_id";
 
         $update_sql = "UPDATE chapters SET Chapter_number = Chapter_number - 1 WHERE course_id = $course_id AND Chapter_number > $chapter_num";
         if ($conn->query($update_sql) === FALSE) {
@@ -28,13 +33,13 @@ if (isset($_GET['action']) && isset($_GET['chapter_id']) && isset($_GET['course_
 
     }
 
-    if (isset($sql) && $conn->query($sql)) {
-        header("Location: remove_chapters.php?course_id=$course_id");
-        exit;
-    } else {
-        echo "<p>Error processing action: " . $conn->error . "</p>";
-        exit;
-    }
+    // if (isset($sql) && $conn->query($sql)) {
+    //     header("Location: remove_chapters.php?course_id=$course_id");
+    //     exit;
+    // } else {
+    //     echo "<p>Error processing action: " . $conn->error . "</p>";
+    //     exit;
+    // }
 }
 
 // -----------------------------

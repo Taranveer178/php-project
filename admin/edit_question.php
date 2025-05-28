@@ -5,7 +5,15 @@ include "header.php";
 $question_id = $_GET['id'];
 
 // Fetch question data
-$sql = "SELECT quiz_id, question_num, question FROM questions WHERE id = $question_id";
+$sql = "SELECT 
+            questions.quiz_id, 
+            questions.question_num, 
+            questions.question, 
+            quiz.quiz_name, 
+            quiz.course_id 
+        FROM  questions 
+        LEFT JOIN quiz ON questions.quiz_id = quiz.id 
+        WHERE questions.id=$question_id ";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
 
@@ -13,10 +21,6 @@ $quiz_id = $row['quiz_id'];
 $selected_question_num = $row['question_num'];
 $selected_question = $row['question'];
 
-// Fetch quiz details
-$sql = "SELECT quiz_name, course_id FROM quiz WHERE id = $quiz_id";
-$result = $conn->query($sql);
-$row = $result->fetch_assoc();
 $quiz_name = $row['quiz_name'];
 $course_id = $row['course_id'];
 

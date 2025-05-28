@@ -1,6 +1,7 @@
 <?php
 include "header.php";
 include "config.php";
+include "admin/delete.php";
 
 if(isset($_POST['search'])) {
     $search = $_POST['search'];
@@ -45,8 +46,9 @@ if(isset($_POST['search'])) {
                     <img src='uploads/<?php echo $row['image']; ?>' alt="<?php echo $row['course_name']; ?> Image">
                     <p class='caption'>
                         <?php echo $row['course_name']; ?>
-                        <?php if ($_SESSION['role'] == 'admin') { ?>
-                            <a href="remove_course.php?id=<?php echo $row['id']; ?>">
+                        <?php if ($_SESSION['role'] == 'admin') { 
+                            $table='course';?>
+                            <a href="index.php?remove_id=<?php echo $row['id']; ?>&table=<?php echo $table; ?>">
                                 <input class="remove-btn" type="button" value="Remove">
                             </a>
                         <?php } ?>
@@ -65,7 +67,7 @@ if(isset($_POST['search'])) {
 </section>
 <br><br>
 <section>
-    <div class="review">
+    <div class="review" id="review">
         <h2>What Our Students Say</h2>
         <div class="review-container">
 
@@ -87,8 +89,10 @@ if(isset($_POST['search'])) {
                     </div>
                     <div class="review_box-down">
                   
-                     <?php if ($_SESSION['role'] == 'admin') { ?>
-                            <a href="admin/remove_review.php?id=<?php echo $row['id']; ?>">
+                     <?php if ($_SESSION['role'] == 'admin') { 
+                        $table='reviews';
+                        ?>
+                            <a href="index.php?table=<?php echo $table;?>&delete_id=<?php echo $row['id']; ?>#review">
                                 <input class="remove-btn" type="button" value="Remove">
                             </a>
                         <?php } ?>
@@ -109,6 +113,7 @@ if(isset($_POST['search'])) {
     </div>
 </section>
 
+
 <section class="queries">
     <div class="queries-left">
         <h2>Have any queries?</h2>
@@ -117,6 +122,34 @@ if(isset($_POST['search'])) {
     <div class="queries-right">
         <button onclick="location.href='contact.php'">Contact Us</button>
     </div>
+</section>
+
+<section class="faq" id="faq">
+    <h2><center>Frequently Asked Questions</center></h2><br><br>
+    <?php
+    $faq_sql= "SELECT * from faq";
+    $tname='faq';
+    $result=$conn->query($faq_sql);
+    $i=1;
+    while($row=$result->fetch_assoc()){
+        echo "<b>Q".$i.". ".$row['question']."</b> ";
+        $id=$row['id'];
+        if($_SESSION['role']=='admin'){
+             
+            echo "<a href='index.php?delete_id=$id&table=$tname#faq'><input type='button' class='remove-btn' value='Remove '></a>";
+        }
+        echo "<br><b>Ans:</b> ".$row['answer'];
+        echo "<br><br>";
+        $i++;
+    }
+ 
+    if($_SESSION['role']=='admin'){
+         echo "<a href='admin/add_faq.php'><input type='button' class='admin-btn' value='Add Questions'></a>";
+    }
+    ?>
+<br><br>
+        
+    <p><b><center>Still Have Queries? <a href="contact.php">Contact Us</a></center></b></p><br><br>
 </section>
 
 <script>

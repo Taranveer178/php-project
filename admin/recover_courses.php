@@ -1,6 +1,7 @@
 <?php
 include "../config.php";
 include "header.php";
+include "delete.php";
 
 $sql = "SELECT * FROM course WHERE deleted_at IS NOT NULL";
 $result = $conn->query($sql);
@@ -43,15 +44,34 @@ if(isset($_GET['id'])){
         }
     }
     elseif($action=='delete'){
-        $sql = "DELETE FROM course WHERE id = $course_id";
+        // 1. Fetch the image filename for the course
+        $sql = "SELECT image FROM course WHERE id = $course_id";
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+
+        if ($row) {
+            $image_filename = $row['image'];
+            $image_path = "../uploads/" . $image_filename;
+
+            // 2. Delete the image file if it exists
+            if (file_exists($image_path)) {
+                unlink($image_path);
+            }
+}
+
+
+        $table= 'course';
+        $delete_id=$course_id;
+        $delete_obj->delete($table, $delete_id);
+        // $sql = "DELETE FROM course WHERE id = $course_id";
         
-        if($conn->query($sql)){
+        // if($conn->query($sql)){
             // echo "<p>Course deleted permanently!</p>";
             header("Location: recover_courses.php");
             exit;
-        } else {
-            echo "<p>Error deleting course: " . $conn->error . "</p>";
-        }
+        // } else {
+        //     echo "<p>Error deleting course: " . $conn->error . "</p>";
+        // }
     }
 }
 
